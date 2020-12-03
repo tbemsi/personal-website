@@ -1,6 +1,6 @@
 baseurl: https://nanx.me/hugo-renga/
 title: Hugo Renga Theme Demo
-author: Jane Doe
+author: Bemsibom Toh
 canonifyurls: yes
 languagecode: en
 paginate: 3
@@ -13,18 +13,18 @@ ignoreFiles:
   - _files$
   - _cache$
 params:
-  copyright: © 2018 Jane Doe
+  copyright: © 2020 Bemsibom Toh
   copyrightUrl: https://nanx.me/hugo-renga/
-  email: example@example.com
+  email: bemsibom.toh@mrc-bsu.cam.ac.uk
   faviconfile: image/favicon.png
-  github: nanxstats
+  github: tbemsi
   highlightjs: yes
-  linkedin: nanxstats
+  linkedin: bemsibom-toh
   logofile: image/avatar.png
-  pagetitle: Jane Doe
+  pagetitle: Bemsibom Toh
   posts_navigation: yes
   progressively: no
-  twitter: nanxstats
+  twitter: tbemsi
   uselatex: yes
 menu:
   primary:
