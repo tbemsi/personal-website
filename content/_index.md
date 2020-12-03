@@ -1,12 +1,14 @@
 ---
-date: "2018-11-09"
+date: "2020-12-03"
 description: Website description.
 menu: main
-title: The Renga Theme for Hugo
+title: Bemsibom Toh
 ---
 
-Lorem ipsum dolor sit amet, ex has sale ullum corrumpit, sea dicam nostrum sensibus ad. Porro tritani persecuti te sed. Omittam dissentias pro ex. Atqui luptatum duo id. Eros minim eam ex, novum elitr accusam quo in. Nec ne audire euripidis, [mea qualisque consetetur cu](https://nanx.me). Suspendisse volutpat sem a risus euismod convallis.
+Currently, I am a Research Associate at the University of Cambridge, working at the [MRC - Biostatistics Unit](https://www.mrc-bsu.cam.ac.uk). My research focuses on developing probabilistic clustering methods for the identification of multimorbidities in the English population. 
 
-In modus congue feugait eos. In nec nonumy volutpat corrumpit, sea assentior quaerendum no, cum affert scripta ea. No nihil voluptaria pro. [Erat democritum mei no](https://nanx.me), homero quodsi aliquando id mel, ridens civibus molestiae et nam.
+Prior to this, I graduated with a PhD in Applied Probability from [Heriot-Watt University](https://www.hw.ac.uk) in Edinburgh. There I worked on in an area of applied probability called the theory of Large Deviations, which estimates the probabilities of rare events occuring in different systems. I applied this theory to different queuing systems.
 
-Ea eam postea facilisi. Nullam forensibus consequuntur usu ea, no ius consul delectus periculis. Eam veri numquam an. Et partiendo gubergren eam. Quod iudicabit has ex, eam diam facilisi eu, elitr aliquip no eum.
+In my spare time I like to [write](www.bmsbm.posthaven.com), play sports (previously basketball, but mostly football these days), play music (I play the electric bass guitar), and I recently got into voice acting.
+
+Please [contact me](www.bemsibomtoh.com/contact) if you have any questions/suggestions.

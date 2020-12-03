@@ -30,14 +30,11 @@ menu:
   primary:
     - identifier: about
       name: About
-      url: /about/
+      url: /
       weight: 1
     - identifier: blog
       name: Blog
       url: /blog/
       weight: 2 
-    - identifier: essays
-      name: Essays
-      url: /essays/
-      weight: 3
+
     
