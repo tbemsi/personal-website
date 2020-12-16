@@ -1,7 +1,7 @@
 ---
-title: "Comparison of clustering methods on Birmingham dataset"
+title: "Profile Regression vs other clustering methods on synthetic data"
 author: "Bemsibom Toh"
-date: "03/11/2020"
+date: 2020-12-16T21:13:14-05:00
 output:
   word_document: default
   pdf_document: default
@@ -38,7 +38,7 @@ library(mclust)
 library(mcclust)
 library(coda)
 library(PReMiuM)
-source('transform_bham_data.R')
+source('/Users/bemsi/Documents/BSU/code/transform_bham_data.R')
 ```
 ```{r extrafonts}
 extrafont::font_import()
@@ -47,30 +47,30 @@ Next we load the different datasets we will use for this project:
 
 ```{r LoadingData}
 setwd('/Users/bemsi/Documents/BSU/code/')
-birmingham.aris <- get(load('sim_20201009_ri.RData')) #ARIs from the other methods
+birmingham.aris <- get(load('/Users/bemsi/Documents/BSU/code/sim_20201009_ri.RData')) #ARIs from the other methods
 
 #profile regression with no outcome
-filelist = list.files("SimulationOutputNoOutcome", pattern = "\\pear_aris.txt$", full.names=TRUE) 
+filelist = list.files("/Users/bemsi/Documents/BSU/code/SimulationOutputNoOutcome", pattern = "\\pear_aris.txt$", full.names=TRUE) 
 premium.aris.no.outcome <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
 
 #profile regression with random outcome
-filelist = list.files("SimulationOutputRandomOutcome", pattern = "\\pear_aris.txt$", full.names=TRUE)
+filelist = list.files("/Users/bemsi/Documents/BSU/code/SimulationOutputRandomOutcome", pattern = "\\pear_aris.txt$", full.names=TRUE)
 premium.aris.random.outcome <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
 
 #profile regression with deterministic outcome
-filelist = list.files("SimulationOutputDetOutcome", pattern = "\\pear_aris.txt$", full.names=TRUE)
+filelist = list.files("/Users/bemsi/Documents/BSU/code/SimulationOutputDetOutcome", pattern = "\\pear_aris.txt$", full.names=TRUE)
 premium.aris.det.outcome <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
 
 #profile regression with semi-deterministic outcome 1
-filelist = list.files("DetOutcomeOne", pattern = "\\pear_aris.txt$", full.names=TRUE)
+filelist = list.files("/Users/bemsi/Documents/BSU/code/DetOutcomeOne", pattern = "\\pear_aris.txt$", full.names=TRUE)
 premium.aris.det.outcome.1 <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
 
 #profile regression with semi-deterministic outcome 2
-filelist = list.files("DetOutcomeThree", pattern = "\\pear_aris.txt$", full.names=TRUE)
+filelist = list.files("/Users/bemsi/Documents/BSU/code/DetOutcomeThree", pattern = "\\pear_aris.txt$", full.names=TRUE)
 premium.aris.det.outcome.2 <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
 
 # Load and transform the first dataset in the bank of simulated datasets
-birmingham.dfs <- get(load('sim_20201009_df.rData'))
+birmingham.dfs <- get(load('/Users/bemsi/Documents/BSU/code/sim_20201009_df.rData'))
 sample.dataframe <- birmingham.dfs[[1]]
 inputs <- transform_bham_data(sample.dataframe)
 
@@ -85,7 +85,7 @@ We now visualize the data, to see whether there is any apparent clustering struc
 ```{r visualizeData}
 clusters <- data.frame(inputs$inputData$group)
 colnames(clusters) <- "Cluster"
-pheatmap::pheatmap(inputs$inputData[2:29],  
+pheatmap::pheatmap(inputs$inputData[2:27],  
                    cluster_rows = F,
                    cluster_cols = F,
                    show_rownames = FALSE,

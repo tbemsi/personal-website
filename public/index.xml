@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Bemsibom Toh</title>
+    <link>https://bemsibomtoh.com/</link>
+    <description>Recent content on Bemsibom Toh</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 03 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://bemsibomtoh.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Somthing light</title>
+      <link>https://bemsibomtoh.com/blog/post/hugo-renga-theme-demo-copy/</link>
+      <pubDate>Wed, 16 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://bemsibomtoh.com/blog/post/hugo-renga-theme-demo-copy/</guid>
+      <description>Something works</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>https://bemsibomtoh.com/about/</link>
+      <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://bemsibomtoh.com/about/</guid>
+      <description>Currently, I am a Research Associate at the University of Cambridge, working at the MRC - Biostatistics Unit. My research focuses on developing probabilistic clustering methods for the identification of multimorbidities in the English population.
+Prior to this, I graduated with a PhD in Applied Probability from Heriot-Watt University in Edinburgh. There I worked on in an area of applied probability called the theory of Large Deviations, which estimates the probabilities of rare events occuring in different systems.</description>
+    </item>
+    
+    <item>
+      <title>Renga Theme Demo</title>
+      <link>https://bemsibomtoh.com/blog/post/hugo-renga-theme-demo/</link>
+      <pubDate>Sat, 10 Nov 2018 12:00:00 +0000</pubDate>
+      
+      <guid>https://bemsibomtoh.com/blog/post/hugo-renga-theme-demo/</guid>
+      <description>Renga is a Bootstrap-based minimalist theme for Hugo.
+Features  Minimalist Responsive &amp;amp; mobile-first (Bootstrap 4) Native font stack High Contrast Math typesetting (MathJaX) Syntax highlighting (highlight.js) Progressive image loading (progressively.js) Disqus Google Analytics Open Graph meta tags Twitter Cards meta tags  Typography h1 Heading h2 Heading h3 Heading h4 Heading h5 Heading h6 Heading  This is bold text
+This is bold text
+This is italic text
+This is italic text</description>
+    </item>
+    
+    <item>
+      <title>Hello R Markdown</title>
+      <link>https://bemsibomtoh.com/blog/2015-07-23-r-rmarkdown/</link>
+      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
+      
+      <guid>https://bemsibomtoh.com/blog/2015-07-23-r-rmarkdown/</guid>
+      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
+You can embed an R code chunk like this:
+summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.</description>
+    </item>
+    
+    <item>
+      <title>Lorem Ipsum</title>
+      <link>https://bemsibomtoh.com/blog/post/lorem-ipsum/</link>
+      <pubDate>Thu, 01 Jan 2015 13:09:13 -0600</pubDate>
+      
+      <guid>https://bemsibomtoh.com/blog/post/lorem-ipsum/</guid>
+      <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+In modus congue feugait eos.</description>
+    </item>
+    
+  </channel>
+</rss>

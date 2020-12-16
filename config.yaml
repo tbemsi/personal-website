@@ -10,7 +10,6 @@ hasCJKLanguage: yes
 ignoreFiles:
   - \.Rmd$
   - \.Rmarkdown$
-  - _files$
   - _cache$
 params:
   copyright: © 2020 Bemsibom Toh
@@ -20,7 +19,7 @@ params:
   github: tbemsi
   highlightjs: yes
   linkedin: bemsibom-toh
-  logofile: image/avatar.png
+  logofile: image/avatar.jpg
   pagetitle: Bemsibom Toh
   posts_navigation: yes
   progressively: no
