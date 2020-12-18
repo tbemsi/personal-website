@@ -1,11 +1,11 @@
 ---
 title: "Profile Regression vs other clustering methods on synthetic data"
 author: "Bemsibom Toh"
-date: 2020-12-16T21:13:14-05:00
+date: 2020-12-16
 output:
-  word_document: default
-  pdf_document: default
   html_document: default
+  pdf_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE, echo=FALSE}
@@ -40,9 +40,6 @@ library(coda)
 library(PReMiuM)
 source('/Users/bemsi/Documents/BSU/code/transform_bham_data.R')
 ```
-```{r extrafonts}
-extrafont::font_import()
-```
 Next we load the different datasets we will use for this project:
 
 ```{r LoadingData}
@@ -72,7 +69,7 @@ premium.aris.det.outcome.2 <- rbindlist(sapply(filelist, fread, simplify=FALSE, 
 # Load and transform the first dataset in the bank of simulated datasets
 birmingham.dfs <- get(load('/Users/bemsi/Documents/BSU/code/sim_20201009_df.rData'))
 sample.dataframe <- birmingham.dfs[[1]]
-inputs <- transform_bham_data(sample.dataframe)
+inputs <- transform_bham_data.one(sample.dataframe)
 
 #modifying original dataframe
 birmingham.aris$PRegr <- premium.aris.no.outcome$V1
@@ -94,15 +91,16 @@ pheatmap::pheatmap(inputs$inputData[2:27],
                    col = c("white", "black"),
                    annotation_row = clusters)
 ```
+
 We can see that there is some structure in the dataset, and there are three clearly identifiable clusters in the dataset, as well as one 'noisy' cluster.
 
-# Unsupervised Premium
+# No outcome
 
 We begin by looking at the output of profile regression when there is no supervision - i.e., we carry out profile regression with no outcome to guide the clustering algorithm.
 
 ## Convergence analysis
 
-We will use three methods to assess convergence of the profile regression algorithm: a visual method using traceplots of certain parameters, the [Gelman Diagnostic](insert_link_here), and the [Geweke Diagnostic](insert_link_here).
+We will use three methods to assess convergence of the profile regression algorithm: a visual method using traceplots of certain parameters, the [Gelman Diagnostic](https://www.rdocumentation.org/packages/coda/versions/0.19-4/topics/gelman.diag), and the [Geweke Diagnostic](https://www.rdocumentation.org/packages/coda/versions/0.19-4/topics/geweke.diag).
 
 We begin by plotting the values of `alpha` through the different steps of the MCMC.
 
@@ -225,3 +223,48 @@ ggplot(birmingham.aris.two, aes(x=Method, y=ARI, fill=Method)) +
 ```
 
 We can see from there that a random outcome (which has no discernible relationship with the rest of the dataset) performs worse than no outcome at all. But once there is some structure in the outcome, the performance of Profile Regression improves quite drastically. 
+
+## Same analysis, this time with a cleaner dataset
+This time, we repeat the analysis for PReMiuM, but we remove all the people who are positive for none of the diseases - i.e., empty rows in the dataset. We want to see whether there will be an improvement in the ARIs.
+
+```{r LoadingCleanData}
+#profile regression with no outcome
+filelist = list.files("/Users/bemsi/Documents/BSU/code/NewDetOutcome1/SimulationOutput", pattern = "\\pear_aris.txt$", full.names=TRUE) 
+clean.premium.no.outcome <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
+
+#profile regression with random outcome
+filelist = list.files("/Users/bemsi/Documents/BSU/code/NewDetOutcome2/SimulationOutput", pattern = "\\pear_aris.txt$", full.names=TRUE)
+clean.premium.det.outcome.two <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
+
+#profile regression with deterministic outcome
+filelist = list.files("/Users/bemsi/Documents/BSU/code/NewDetOutcome3/SimulationOutput", pattern = "\\pear_aris.txt$", full.names=TRUE)
+clean.premium.det.outcome.three <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
+
+#profile regression with semi-deterministic outcome 1
+filelist = list.files("/Users/bemsi/Documents/BSU/code/NewDetOutcome4/SimulationOutput", pattern = "\\pear_aris.txt$", full.names=TRUE)
+clean.premium.det.outcome <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
+
+inputs.cleaned <- transform_bham_data(sample.dataframe)
+
+cleaned.premium <- data.frame(clean.premium.no.outcome, clean.premium.det.outcome.two, clean.premium.det.outcome.three, clean.premium.det.outcome.three)
+colnames(cleaned.premium) <- c("NoOutcomes", "SemiDetOne", "SemiDetTwo", "DetOutcome")
+
+new.aris <- reshape2::melt(cleaned.premium, measure.vars=colnames(cleaned.premium))
+names(new.aris) <- c("Method", "ARI")
+
+ggplot(new.aris, aes(x=Method, y=ARI, fill=Method)) +
+  geom_boxplot() +
+  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+  geom_jitter(color="black", size=0.4, alpha=0.9) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Adjusted Rand Indices for cleaned dataset") +
+  xlab("Methods")
+```
+
+We see that we get much stronger ARIs, after eliminating the empty rows. The patterns are quite similar to those with the more messy data - the clearer the outcome, the better the ability of the algorithm to recover the clustering structure.
+
+
