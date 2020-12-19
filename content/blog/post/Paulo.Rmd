@@ -1,0 +1,270 @@
+---
+title: "Profile Regression vs other clustering methods on synthetic data"
+author: "Bemsibom Toh"
+date: 2020-12-16
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+require("knitr") 
+opts_knit$set(root.dir = "/Users/bemsi/Documents/BSU/code")
+```
+
+
+# Introduction
+
+Profile regression is a clustering technique which links the clusters to an outcome of interest via a regression model. It differs from traditional distance-based clustering techniques in that it uses a stochastic model-based approach.
+
+In general, models are fitted using Markov Chain Monte Carlo sampling methods, which outputs a different partition of the data at each iteration of the sampler.
+
+The aim of this article is to compare the performance of profile regression to other clustering methods, such as Hierarchical clustering, K-Means, K-mode and Latent Class Analysis. We will do this by applying profile regression to a set of 1000 simulated datasets, generated from code written by [Linda Nichols](https://warwick.ac.uk/fac/sci/statistics/staff/academic-research/lnichols/) and [Tom Taverner](https://research.birmingham.ac.uk/portal/en/persons/thomas-taverner(68156dc8-5825-4005-8f6c-559fcbf6717f).html). The mathematical model used to generate these datasets will be the subject of another article.
+
+We begin by loading the datasets and libraries we need as follows:
+
+```{r loading}
+library(data.table)
+library(ggplot2)
+library(data.table)
+library(ggplot2)
+library(lpSolve)
+library(viridisLite)
+library(viridis)
+library(hrbrthemes)
+hrbrthemes::import_roboto_condensed()
+library(mclust)
+library(mcclust)
+library(coda)
+library(PReMiuM)
+source('/Users/bemsi/Documents/BSU/code/transform_bham_data.R')
+```
+Next we load the different datasets we will use for this project:
+
+```{r LoadingData}
+setwd('/Users/bemsi/Documents/BSU/code/')
+birmingham.aris <- get(load('/Users/bemsi/Documents/BSU/code/sim_20201009_ri.RData')) #ARIs from the other methods
+
+#profile regression with no outcome
+filelist = list.files("/Users/bemsi/Documents/BSU/code/SimulationOutputNoOutcome", pattern = "\\pear_aris.txt$", full.names=TRUE) 
+premium.aris.no.outcome <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
+
+#profile regression with random outcome
+filelist = list.files("/Users/bemsi/Documents/BSU/code/SimulationOutputRandomOutcome", pattern = "\\pear_aris.txt$", full.names=TRUE)
+premium.aris.random.outcome <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
+
+#profile regression with deterministic outcome
+filelist = list.files("/Users/bemsi/Documents/BSU/code/SimulationOutputDetOutcome", pattern = "\\pear_aris.txt$", full.names=TRUE)
+premium.aris.det.outcome <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
+
+#profile regression with semi-deterministic outcome 1
+filelist = list.files("/Users/bemsi/Documents/BSU/code/DetOutcomeOne", pattern = "\\pear_aris.txt$", full.names=TRUE)
+premium.aris.det.outcome.1 <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
+
+#profile regression with semi-deterministic outcome 2
+filelist = list.files("/Users/bemsi/Documents/BSU/code/DetOutcomeThree", pattern = "\\pear_aris.txt$", full.names=TRUE)
+premium.aris.det.outcome.2 <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
+
+# Load and transform the first dataset in the bank of simulated datasets
+birmingham.dfs <- get(load('/Users/bemsi/Documents/BSU/code/sim_20201009_df.rData'))
+sample.dataframe <- birmingham.dfs[[1]]
+inputs <- transform_bham_data.one(sample.dataframe)
+
+#modifying original dataframe
+birmingham.aris$PRegr <- premium.aris.no.outcome$V1
+birmingham.aris.one <- reshape2::melt(birmingham.aris , measure.vars=c("LCA", "kmode", "HCA", "MCAkm", "kmean", "PRegr"))
+names(birmingham.aris.one) <- c("Method", "ARI")
+```
+
+We now visualize the data, to see whether there is any apparent clustering structure in it.
+
+```{r visualizeData}
+clusters <- data.frame(inputs$inputData$group)
+colnames(clusters) <- "Cluster"
+pheatmap::pheatmap(inputs$inputData[2:27],  
+                   cluster_rows = F,
+                   cluster_cols = F,
+                   show_rownames = FALSE,
+                   legend = FALSE,
+                   cutree_rows = 4, 
+                   col = c("white", "black"),
+                   annotation_row = clusters)
+```
+
+We can see that there is some structure in the dataset, and there are three clearly identifiable clusters in the dataset, as well as one 'noisy' cluster.
+
+# No outcome
+
+We begin by looking at the output of profile regression when there is no supervision - i.e., we carry out profile regression with no outcome to guide the clustering algorithm.
+
+## Convergence analysis
+
+We will use three methods to assess convergence of the profile regression algorithm: a visual method using traceplots of certain parameters, the [Gelman Diagnostic](https://www.rdocumentation.org/packages/coda/versions/0.19-4/topics/gelman.diag), and the [Geweke Diagnostic](https://www.rdocumentation.org/packages/coda/versions/0.19-4/topics/geweke.diag).
+
+We begin by plotting the values of `alpha` through the different steps of the MCMC.
+
+```{r plotAlphas}
+birmingham.dataframes <- get(load('~/Documents/BSU/code/sim_20201009_df.RData'))
+sample.dataframe <- birmingham.dataframes[[1]] #We are taking the first dataframe in our series
+group.labels <- sample.dataframe$group
+alphas <- fread("~/Documents/BSU/code/MCMCDiagnostics/myOutput_1_alpha.txt")
+plot(alphas$V1, type='l', col='red', ylab='alpha', xlab='')
+```
+
+We can that the algorithm converges after several iterations.
+
+We now run the Geweke diagnostic test on the alphas to see if there is convergence.
+
+```{r geweke}
+mcmc_alpha <- mcmc(data=alphas$V1)
+geweke.diag(mcmc_alpha)
+```
+We obtain a z-value of about 1.57, which is within the acceptance region for a significance level of 0.05.
+
+To run the Gelman diagnostic, we need two chains. So we run Premium twice on the same dataset, using different starting points (seeds), and then proceed to carry out this test.
+
+```{r GelmanDiagnostic}
+# runInfoObj <- profRegr(yModel = inputs$yModel,
+#                        xModel = inputs$xModel,
+#                        nSweeps = 30000,
+#                        nBurn = 2000,
+#                        data = inputs$inputData[,2:27],
+#                        output="myOutput_unsupervised_gelman_1",
+#                        covNames = names(inputs$inputData[,2:27]),
+#                        reportBurnIn = TRUE,
+#                        seed = 12,
+#                        excludeY = TRUE)
+# 
+# runInfoObj <- profRegr(yModel = inputs$yModel,
+#                        xModel = inputs$xModel,
+#                        nSweeps = 30000,
+#                        nBurn = 2000,
+#                        data = inputs$inputData[,2:27],
+#                        output="myOutput_unsupervised_gelman_2",
+#                        covNames = names(inputs$inputData[,2:27]),
+#                        reportBurnIn = TRUE,
+#                        seed = 13,
+#                        excludeY = TRUE)
+
+alpha_1 <- fread("~/Documents/BSU/code/myOutput_unsupervised_gelman_1_alpha.txt")
+alpha_2 <- fread("~/Documents/BSU/code/myOutput_unsupervised_gelman_2_alpha.txt")
+mcmc_alpha_1 <- mcmc(data=alpha_1$V1)
+mcmc_alpha_2 <- mcmc(data=alpha_2$V1)
+combined.chains <- mcmc.list(mcmc_alpha_1,mcmc_alpha_2)
+gelman.diag(combined.chains)
+```
+The Gelman diagnostic here is 1. A factor of 1 means that between variance and within chain variance are equal, larger values mean that there is still a notable difference between chains. 
+
+Now we visualize the distribution of ARIs for the different methods when applied on the dataset.
+
+```{r firstplot}
+ggplot(birmingham.aris.one, aes(x=Method, y=ARI, fill=Method)) +
+  geom_boxplot() +
+  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+  geom_jitter(color="black", size=0.4, alpha=0.9) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Adjusted Rand Indices for different methods") +
+  xlab("Methods")
+```
+
+The ARIs are quite low in general. A possible reason for this is that there may be empty rows in the dataset which need to be eliminated. 
+ 
+Unsupervised profile regression does... okay, as you can see from the boxplots. Given that the number of clusters present in the dataset is known to the other clustering algorithms, but not to profile regression, this is not entirely a bad situation.
+
+
+## Outcome - guided profile regression
+Now, we want to investigate the effect of incorporating an outcome we incorporate an outcome to the dataset randomly. We now want to improve on the clarity of the outcome used in the analysis. 'Clarity' in this scenario is a measure of correlation between the binary data and the outcome. We will experiment with discrete, binary outcomes in the first instance, and consider different levels of clarity. To do this, we will control the probability of the outcome being equal to 1 for a given patient - the closer this probability is to 1, the clearer the outcome is. This is done as follows:
+<pre><code>
+outcomes <- function(probs=c(0.7,0.3), size=10){
+  x1 <- sample(c(0,1), size/2, replace=TRUE, prob=probs)
+  x2 <- sample(c(0,1), size/2, replace=TRUE, prob=rev(probs))
+  c(x1, x2)
+}
+</code></pre>
+And then the `outcome` vector is added on to the dataset, and then analysed accordingly. 
+
+Using this code, we can derive four different outcomes:
+
+- *Random outcome*: The probabilities are `c(0.5, 0.5)`
+- *Deterministic outcome*: The probabilities are `c(1,0)`
+- *Semi-deterministic outcome 1*: he probabilities are `c(0.6,0.4)`
+- *Semi-deterministic outcome 2*: he probabilities are `c(0.8,0.2)`
+
+We now run `PReMiuM` on datasets with these outcomes incorporated, and we get the following results:
+
+```{r PremiumMultipleOutcomes}
+birmingham.aris$NoOutcome <- premium.aris.no.outcome$V1
+birmingham.aris$RandomOutcome <- premium.aris.random.outcome$V1
+birmingham.aris$DetOutcome <- premium.aris.det.outcome$V1
+birmingham.aris$SemiDetOne <- premium.aris.det.outcome.1$V1
+birmingham.aris$SemiDetTwo <- premium.aris.det.outcome.2$V1
+
+interesting.columns <- c('HCA', 'PRegr', 'RandomOutcome', 'SemiDetOne', 'SemiDetTwo', 'DetOutcome')
+ 
+birmingham.aris.two <- reshape2::melt(birmingham.aris[interesting.columns], measure.vars=interesting.columns)
+names(birmingham.aris.two) <- c("Method", "ARI")
+
+ggplot(birmingham.aris.two, aes(x=Method, y=ARI, fill=Method)) +
+  geom_boxplot() +
+  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+  geom_jitter(color="black", size=0.4, alpha=0.9) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Adjusted Rand Indices for different methods") +
+  xlab("Methods")
+```
+
+We can see from there that a random outcome (which has no discernible relationship with the rest of the dataset) performs worse than no outcome at all. But once there is some structure in the outcome, the performance of Profile Regression improves quite drastically. 
+
+## Same analysis, this time with a cleaner dataset
+This time, we repeat the analysis for PReMiuM, but we remove all the people who are positive for none of the diseases - i.e., empty rows in the dataset. We want to see whether there will be an improvement in the ARIs.
+
+```{r LoadingCleanData}
+#profile regression with no outcome
+filelist = list.files("/Users/bemsi/Documents/BSU/code/NewDetOutcome1/SimulationOutput", pattern = "\\pear_aris.txt$", full.names=TRUE) 
+clean.premium.no.outcome <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
+
+#profile regression with random outcome
+filelist = list.files("/Users/bemsi/Documents/BSU/code/NewDetOutcome2/SimulationOutput", pattern = "\\pear_aris.txt$", full.names=TRUE)
+clean.premium.det.outcome.two <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
+
+#profile regression with deterministic outcome
+filelist = list.files("/Users/bemsi/Documents/BSU/code/NewDetOutcome3/SimulationOutput", pattern = "\\pear_aris.txt$", full.names=TRUE)
+clean.premium.det.outcome.three <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
+
+#profile regression with semi-deterministic outcome 1
+filelist = list.files("/Users/bemsi/Documents/BSU/code/NewDetOutcome4/SimulationOutput", pattern = "\\pear_aris.txt$", full.names=TRUE)
+clean.premium.det.outcome <- rbindlist(sapply(filelist, fread, simplify=FALSE, USE.NAMES = TRUE))
+
+inputs.cleaned <- transform_bham_data(sample.dataframe)
+
+cleaned.premium <- data.frame(clean.premium.no.outcome, clean.premium.det.outcome.two, clean.premium.det.outcome.three, clean.premium.det.outcome.three)
+colnames(cleaned.premium) <- c("NoOutcomes", "SemiDetOne", "SemiDetTwo", "DetOutcome")
+
+new.aris <- reshape2::melt(cleaned.premium, measure.vars=colnames(cleaned.premium))
+names(new.aris) <- c("Method", "ARI")
+
+ggplot(new.aris, aes(x=Method, y=ARI, fill=Method)) +
+  geom_boxplot() +
+  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+  geom_jitter(color="black", size=0.4, alpha=0.9) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Adjusted Rand Indices for cleaned dataset") +
+  xlab("Methods")
+```
+
+We see that we get much stronger ARIs, after eliminating the empty rows. The patterns are quite similar to those with the more messy data - the clearer the outcome, the better the ability of the algorithm to recover the clustering structure.
+
+
