@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Blog on Bemsibom Toh</title>
-    <link>https://bemsibomtoh.com/blog/</link>
-    <description>Recent content in Blog on Bemsibom Toh</description>
+    <title>Posts on Bemsibom Toh</title>
+    <link>https://bemsibomtoh.com/post/</link>
+    <description>Recent content in Posts on Bemsibom Toh</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 16 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://bemsibomtoh.com/blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 16 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://bemsibomtoh.com/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Profile Regression vs other clustering methods on synthetic data</title>
-      <link>https://bemsibomtoh.com/blog/paulo/</link>
+      <link>https://bemsibomtoh.com/post/2020-12-16-profile-regression-vs-other-clustering-methods-on-synthetic-data/</link>
       <pubDate>Wed, 16 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://bemsibomtoh.com/blog/paulo/</guid>
+      <guid>https://bemsibomtoh.com/post/2020-12-16-profile-regression-vs-other-clustering-methods-on-synthetic-data/</guid>
       <description>Introduction Profile regression is a clustering technique which links the clusters to an outcome of interest via a regression model. It differs from traditional distance-based clustering techniques in that it uses a stochastic model-based approach.
 In general, models are fitted using Markov Chain Monte Carlo sampling methods, which outputs a different partition of the data at each iteration of the sampler.
 The aim of this article is to compare the performance of profile regression to other clustering methods, such as Hierarchical clustering, K-Means, K-mode and Latent Class Analysis.</description>

@@ -8,7 +8,17 @@
   </url>
   
   <url>
-    <loc>https://bemsibomtoh.com/blog/post/hugo-renga-theme-demo-copy/</loc>
+    <loc>https://bemsibomtoh.com/post/</loc>
+    <lastmod>2020-12-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://bemsibomtoh.com/blog/paulo/</loc>
+    <lastmod>2020-12-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://bemsibomtoh.com/post/2020-12-16-profile-regression-vs-other-clustering-methods-on-synthetic-data/</loc>
     <lastmod>2020-12-16T00:00:00+00:00</lastmod>
   </url>
   
@@ -23,48 +33,11 @@
   </url>
   
   <url>
-    <loc>https://bemsibomtoh.com/blog/post/hugo-renga-theme-demo/</loc>
-    <lastmod>2018-11-10T12:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://bemsibomtoh.com/categories/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://bemsibomtoh.com/blog/2015-07-23-r-rmarkdown/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://bemsibomtoh.com/tags/plot/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://bemsibomtoh.com/categories/r/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://bemsibomtoh.com/tags/r-markdown/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://bemsibomtoh.com/tags/regression/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://bemsibomtoh.com/tags/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://bemsibomtoh.com/blog/post/lorem-ipsum/</loc>
-    <lastmod>2015-01-01T13:09:13-06:00</lastmod>
   </url>
   
 </urlset>
